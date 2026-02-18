@@ -38,57 +38,83 @@ function clearTri() {
 //  MENU — LEFT (sem triângulo)
 // ═══════════════════════════════════════════════════════════════════════════
 
-function setupNaiveSubmenu(triggerEl, submenuEl) {
-  let open  = false;
+function setupNaiveMenus(pairs) {
+  // pairs: [{ triggerEl, submenuEl }, ...]
+  let activeIndex = -1; // which pair is currently open (-1 = none)
   let rafId = null;
 
-  function doOpen() {
-    if (open) return;
-    open = true;
+  function openAt(i) {
+    if (activeIndex === i) return;
+    // Close current
+    if (activeIndex !== -1) {
+      const prev = pairs[activeIndex];
+      prev.triggerEl.classList.remove('open');
+      prev.submenuEl.classList.remove('visible');
+    }
+    activeIndex = i;
+    if (i === -1) return;
+    const { triggerEl, submenuEl } = pairs[i];
     triggerEl.classList.add('open');
     const menuRect = submenuEl.parentElement.getBoundingClientRect();
     const trigRect = triggerEl.getBoundingClientRect();
     submenuEl.style.top = (trigRect.top - menuRect.top) + 'px';
     submenuEl.classList.add('visible');
-    cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(tick);
-  }
-
-  function doClose() {
-    if (!open) return;
-    open = false;
-    triggerEl.classList.remove('open');
-    submenuEl.classList.remove('visible');
-    cancelAnimationFrame(rafId);
-    rafId = null;
   }
 
   function tick() {
     const mx = mouse.x;
     const my = mouse.y;
-    const trigRect = triggerEl.getBoundingClientRect();
-    const r        = submenuEl.getBoundingClientRect();
-    // Cover the full gap: from the right edge of the trigger to the right edge of the submenu
-    const subRect  = { left: trigRect.right, right: r.right, top: r.top, bottom: r.bottom };
-    if (!rectContains(trigRect, mx, my) && !rectContains(subRect, mx, my)) {
-      doClose();
-      return;
+
+    // Check if mouse is over any trigger
+    for (let i = 0; i < pairs.length; i++) {
+      const trigRect = pairs[i].triggerEl.getBoundingClientRect();
+      if (rectContains(trigRect, mx, my)) {
+        openAt(i);
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
     }
+
+    // If a submenu is open, check if mouse is in the gap+submenu area
+    if (activeIndex !== -1) {
+      const { triggerEl, submenuEl } = pairs[activeIndex];
+      const trigRect = triggerEl.getBoundingClientRect();
+      const r = submenuEl.getBoundingClientRect();
+      const subRect = { left: trigRect.right, right: r.right, top: r.top, bottom: r.bottom };
+      if (rectContains(subRect, mx, my)) {
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
+      // Mouse left both trigger and submenu — close
+      openAt(-1);
+    }
+
     rafId = requestAnimationFrame(tick);
   }
 
-  triggerEl.addEventListener('mouseenter', doOpen);
-  submenuEl.addEventListener('click', e => e.stopPropagation());
+  // Start the global tick on any mouseenter into the menu
+  pairs.forEach(({ triggerEl }) => {
+    triggerEl.addEventListener('mouseenter', () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(tick);
+    });
+  });
+
+  pairs.forEach(({ submenuEl }) => {
+    submenuEl.addEventListener('click', e => e.stopPropagation());
+  });
 }
 
-setupNaiveSubmenu(
-  document.getElementById('naive-move-trigger'),
-  document.getElementById('naive-submenu-move')
-);
-setupNaiveSubmenu(
-  document.getElementById('naive-share-trigger'),
-  document.getElementById('naive-submenu')
-);
+setupNaiveMenus([
+  {
+    triggerEl: document.getElementById('naive-move-trigger'),
+    submenuEl: document.getElementById('naive-submenu-move')
+  },
+  {
+    triggerEl: document.getElementById('naive-share-trigger'),
+    submenuEl: document.getElementById('naive-submenu')
+  }
+]);
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  MENU — RIGHT (triangle safe zone)
