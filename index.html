@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Context Menu — Comparação</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- SVG overlay for triangle (safe zone only) -->
+<svg id="svg-overlay" xmlns="http://www.w3.org/2000/svg">
+  <polygon id="tri"
+    points=""
+    fill="#85E3D0"
+    fill-opacity="0.15"
+    stroke="#33D1B1"
+    stroke-width="1.4"
+    stroke-dasharray="4 3"
+    stroke-linejoin="round"
+    stroke-linecap="round"
+  />
+</svg>
+
+<div class="comparison">
+
+  <!-- ══ LEFT — Sem área segura ══ -->
+  <div class="column naive">
+    <span class="column-label">Sem triângulo de área segura</span>
+    <div class="menu-wrapper">
+      <div class="ctx-menu">
+
+        <div class="menu-item">
+          <span class="menu-item-label">Novo arquivo</span>
+          <span class="menu-item-shortcut">⌘N</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-label">Abrir...</span>
+          <span class="menu-item-shortcut">⌘O</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-label">Duplicar</span>
+          <span class="menu-item-shortcut">⌘D</span>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="menu-item has-submenu" id="naive-move-trigger">
+          <span class="menu-item-label">Mover para</span>
+          <div class="menu-item-right">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#C8C8C8" viewBox="0 0 256 256"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path></svg>
+          </div>
+        </div>
+        <div class="submenu" id="naive-submenu-move">
+          <div class="menu-item"><span class="menu-item-label">Projetos</span><div class="menu-item-right"><i class="ph-bold ph-folder" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+          <div class="menu-item"><span class="menu-item-label">Arquivados</span><div class="menu-item-right"><i class="ph-bold ph-archive" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+          <div class="menu-item"><span class="menu-item-label">Favoritos</span><div class="menu-item-right"><i class="ph-bold ph-star" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+        </div>
+
+        <div class="menu-item has-submenu" id="naive-share-trigger">
+          <span class="menu-item-label">Compartilhar</span>
+          <div class="menu-item-right">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#C8C8C8" viewBox="0 0 256 256"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path></svg>
+          </div>
+        </div>
+        <div class="submenu" id="naive-submenu">
+          <div class="menu-item"><span class="menu-item-label">Copiar link</span><div class="menu-item-right"><i class="ph-bold ph-link" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+          <div class="menu-item"><span class="menu-item-label">Exportar</span><div class="menu-item-right"><i class="ph-bold ph-export" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+          <div class="menu-item"><span class="menu-item-label">Enviar por e-mail</span><div class="menu-item-right"><i class="ph-bold ph-envelope" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+          <div class="menu-item"><span class="menu-item-label">Permissões</span><div class="menu-item-right"><i class="ph-bold ph-lock-key" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="menu-item">
+          <span class="menu-item-label">Renomear</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-label danger">Excluir</span>
+          <div class="menu-item-right">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#C8C8C8" viewBox="0 0 256 256"><path d="M216,36H68.53a20.09,20.09,0,0,0-17.15,9.71L5.71,121.83a12,12,0,0,0,0,12.34l45.67,76.12A20.09,20.09,0,0,0,68.53,220H216a20,20,0,0,0,20-20V56A20,20,0,0,0,216,36Zm-4,160H70.8L30,128,70.8,60H212ZM103.51,143.51,119,128l-15.52-15.51a12,12,0,0,1,17-17L136,111l15.51-15.52a12,12,0,0,1,17,17L153,128l15.52,15.51a12,12,0,0,1-17,17L136,145l-15.51,15.52a12,12,0,0,1-17-17Z"></path></svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT — Com área segura ══ -->
+  <div class="column safe">
+    <span class="column-label">Com triângulo de área segura</span>
+    <div class="menu-wrapper">
+      <div class="ctx-menu">
+
+        <div class="menu-item">
+          <span class="menu-item-label">Novo arquivo</span>
+          <span class="menu-item-shortcut">⌘N</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-label">Abrir...</span>
+          <span class="menu-item-shortcut">⌘O</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-label">Duplicar</span>
+          <span class="menu-item-shortcut">⌘D</span>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="menu-item has-submenu" id="safe-move-trigger">
+          <span class="menu-item-label">Mover para</span>
+          <div class="menu-item-right">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#C8C8C8" viewBox="0 0 256 256"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path></svg>
+          </div>
+        </div>
+        <div class="submenu" id="safe-submenu-move">
+          <div class="menu-item"><span class="menu-item-label">Projetos</span><div class="menu-item-right"><i class="ph-bold ph-folder" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+          <div class="menu-item"><span class="menu-item-label">Arquivados</span><div class="menu-item-right"><i class="ph-bold ph-archive" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+          <div class="menu-item"><span class="menu-item-label">Favoritos</span><div class="menu-item-right"><i class="ph-bold ph-star" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+        </div>
+
+        <div class="menu-item has-submenu" id="safe-share-trigger">
+          <span class="menu-item-label">Compartilhar</span>
+          <div class="menu-item-right">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#C8C8C8" viewBox="0 0 256 256"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path></svg>
+          </div>
+        </div>
+        <div class="submenu" id="safe-submenu">
+          <div class="menu-item"><span class="menu-item-label">Copiar link</span><div class="menu-item-right"><i class="ph-bold ph-link" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+          <div class="menu-item"><span class="menu-item-label">Exportar</span><div class="menu-item-right"><i class="ph-bold ph-export" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+          <div class="menu-item"><span class="menu-item-label">Enviar por e-mail</span><div class="menu-item-right"><i class="ph-bold ph-envelope" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+          <div class="menu-item"><span class="menu-item-label">Permissões</span><div class="menu-item-right"><i class="ph-bold ph-lock-key" style="color:#C8C8C8;font-size:16px;"></i></div></div>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="menu-item">
+          <span class="menu-item-label">Renomear</span>
+        </div>
+        <div class="menu-item">
+          <span class="menu-item-label danger">Excluir</span>
+          <div class="menu-item-right">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#C8C8C8" viewBox="0 0 256 256"><path d="M216,36H68.53a20.09,20.09,0,0,0-17.15,9.71L5.71,121.83a12,12,0,0,0,0,12.34l45.67,76.12A20.09,20.09,0,0,0,68.53,220H216a20,20,0,0,0,20-20V56A20,20,0,0,0,216,36Zm-4,160H70.8L30,128,70.8,60H212ZM103.51,143.51,119,128l-15.52-15.51a12,12,0,0,1,17-17L136,111l15.51-15.52a12,12,0,0,1,17,17L153,128l15.52,15.51a12,12,0,0,1-17,17L136,145l-15.51,15.52a12,12,0,0,1-17-17Z"></path></svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<label class="triangle-toggle">
+  <input type="checkbox" id="tri-toggle" checked>
+  <span class="toggle-label">Mostrar triângulo de área segura</span>
+</label>
+
+<script src="menu.js"></script>
+</body>
+</html>
